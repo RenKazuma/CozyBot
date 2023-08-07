@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>DiscordApi</name>
+    </assembly>
+    <members>
+        <member name="M:DiscordApi.Controllers.UserController.GetUserById(System.String)">
+            <summary>
+            Find user by username
+            </summary>
+            <param name="username">Username to get the user</param>
+            <response code="200">Successfull operation</response>
+            <response code="404">No user found</response>
+            <response code="500">No Connection to Database</response>
+            <returns>The found user</returns>
+        </member>
+    </members>
+</doc>

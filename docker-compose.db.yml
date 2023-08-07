@@ -1,0 +1,13 @@
+version: "2.13"
+services:
+  sql:
+    image: mcr.microsoft.com/mssql/server:2017-latest
+    environment:
+      - SA_PASSWORD=P@ssword
+      - ACCEPT_EULA=Y
+    ports:
+      - "11433:1433"
+    volumes:
+      - ./docker/mssql/data:/var/opt/mssql/data
+      - ./docker/mssql/log:/var/opt/mssql/log
+      - ./docker/mssql/secrets:/var/opt/mssql/secrets

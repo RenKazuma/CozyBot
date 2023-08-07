@@ -1,0 +1,5 @@
+obj/
+bin/
+appsettings.json
+2023*
+DatabaseContextModelSnapshot.cs

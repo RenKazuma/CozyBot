@@ -1,0 +1,19 @@
+# ignore Visual Studio Code files
+.vscode/
+
+# ignore build output
+bin/
+obj/
+
+# ignore package files
+*.nupkg
+*.snupkg
+
+# ignore .NET Core DLL files
+*.dll
+*.pdb
+
+#ignore node_modules
+node_modules/
+
+.idea
