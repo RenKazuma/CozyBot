@@ -54,13 +54,20 @@ client.on('interactionCreate', async (interaction) => {
 
   const message = interaction.message;
 
+  var newEmbed;
   if (interaction.customId === "confirm") {
-    var newEmbed = Poll.editEmbed(0, interaction);
+    newEmbed = await Poll.editEmbed(0, interaction);
   } else if (interaction.customId === "cancel"){
-    var newEmbed = Poll.editEmbed(1, interaction);
+     newEmbed = await Poll.editEmbed(1, interaction);
   } else if (interaction.customId === "pending"){
-    var newEmbed = Poll.editEmbed(2, interaction);
+     newEmbed = await Poll.editEmbed(2, interaction);
   }
+
+  if (typeof newEmbed === 'string') {
+    await interaction.reply({ content: newEmbed, ephemeral: true });
+    return;
+  }
+
       await message.edit({ embeds: [newEmbed] });
 
       await interaction.reply({ content: `You voted vor ${interaction.customId}`, ephemeral: true }); // Use 'ephemeral: false' for a public reply

@@ -1,31 +1,62 @@
-const {  EmbedBuilder, Embed } = require('discord.js');
+const { EmbedBuilder, Embed } = require("discord.js");
+const axios = require("axios");
 
-function editEmbed(whichField, interaction) {
+async function editEmbed(whichField, interaction) {
   const username = interaction.user.username;
 
-  // Update the embed to add the username as the last value of the first field
+  // Update the embed to add the username as the last value of the specified field
   const oldEmbed = interaction.message.embeds[0];
 
-  // Make a copy of the first field
-  const updatedFirstField = { ...oldEmbed.fields[whichField] };
+  // Make a copy of the specified field
+  const updatedField = { ...oldEmbed.fields[whichField] };
 
-  // Remove the default "-" value from the first field if it exists
-  if (updatedFirstField.value === '-') {
-    updatedFirstField.value = '';
-  }
+  const apiUrl = process.env.Api + "Poll";
+  const urlWithQuery = apiUrl + `?messageId=${interaction.message.id}`;
+  const response = await axios.get(urlWithQuery);
+  const multipleChoiceValue = response.data.multiple_choice;
+  
+  var isUsernameDisplayed = false;
 
-  // Append the username to the value of the first field
-  updatedFirstField.value += `\n${username}`;
-
-  // Copy the rest of the fields from the old embed to the new embed
-  const newEmbed = new EmbedBuilder(oldEmbed)
-    .spliceFields(whichField, 1, updatedFirstField); // Replace the first field with the updated one
-
-  // Add the remaining fields from the old embed to the new embed
-  for (let i = 1; i < oldEmbed.fields.length; i++) {
+  for (let i = 0; i < oldEmbed.fields.length; i++) {
     const field = oldEmbed.fields[i];
+
+    if (field.value.includes(username)) {
+      isUsernameDisplayed = true;
+      break; // If username is found, no need to continue checking other fields
+    }
   }
+
+  if (multipleChoiceValue || !isUsernameDisplayed) {
+    // Remove the default "-" value from the specified field if it exists
+    if (updatedField.value === "-") {
+      updatedField.value = "";
+    }
+
+    // Check if the username is already present in the specified field
+    if (updatedField.value.includes(username)) {
+      // Return a message indicating that the user has already voted
+      return "You already voted for this option!";
+    }
+
+    // Append the username to the value of the specified field
+    updatedField.value += `\n${username}`;
+
+    // Copy the rest of the fields from the old embed to the new embed
+    const newEmbed = new EmbedBuilder(oldEmbed).spliceFields(
+      whichField,
+      1,
+      updatedField
+    ); // Replace the specified field with the updated one
+
+    // Add the remaining fields from the old embed to the new embed
+    for (let i = 1; i < oldEmbed.fields.length; i++) {
+      const field = oldEmbed.fields[i];
+    }
+
     return newEmbed;
+  } 
+
+  return 'You already voted for this poll';
 }
 
 module.exports = {

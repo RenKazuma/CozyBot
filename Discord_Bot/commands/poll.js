@@ -1,5 +1,6 @@
 const { SlashCommandBuilder } = require('discord.js');
 const {  ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder } = require('discord.js');
+const axios = require('axios');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -18,12 +19,12 @@ module.exports = {
         .addStringOption(option  => 
             option 
             .setName('button_2_label')
-            .setDescription('Set the Button 1 Label')
+            .setDescription('Set the Button 2 Label')
             .setRequired(true))
         .addStringOption(option  => 
             option 
             .setName('button_3_label')
-            .setDescription('Set the Button 1 Label')
+            .setDescription('Set the Button 3 Label')
             .setRequired(true))
         .addStringOption(option  => 
             option 
@@ -34,7 +35,13 @@ module.exports = {
 				{ name: 'Purple', value: '#5e548e' },
 				{ name: 'Blue', value: '#90e0ef' },
 				{ name: 'Green', value: '#a7c957' },
-			)),
+			))
+        .addBooleanOption(option =>
+            option
+            .setName('multiple_choice')
+            .setDescription('If user can vote for multiple choices')
+            .setRequired(false)
+        ),
 
     async execute(interaction) {
 
@@ -43,6 +50,7 @@ module.exports = {
         const btn1 = interaction.options.getString('button_1_label');
         const btn2 = interaction.options.getString('button_2_label');
         const btn3 = interaction.options.getString('button_3_label');
+        const multipleChoice = interaction.options.getBoolean('multiple_choice') ?? false;
 
          const errorMessages = [];
 
@@ -99,13 +107,26 @@ module.exports = {
 			.addComponents(confirm, cancel, pending);
 
         // Send the main reply with the embed (visible to everyone)
-        await interaction.reply({ embeds: [embed], components: [row]  });
-    
+        var response2 = await interaction.reply({ embeds: [embed], components: [row]  });
+      
         // Send error messages as ephemeral replies (visible only to the user who used the command)
         for (const errorMessage of errorMessages) {
           await interaction.followUp({ content: errorMessage, ephemeral: true });
         }
     
+        const pollData = {
+            id: '',
+            messageId: response2.id,
+            guildId: '974067727801139230',
+            multiple_choice: multipleChoice,
+          };
+
+          console.log(pollData);
+          const apiUrl = process.env.Api + "Poll";
+          const response = await axios.post(apiUrl, pollData);
+
+          // Assuming the API returns a success response (e.g., status code 200)
+          console.log("Poll added successfully:", response.data);
     },
 },
   
