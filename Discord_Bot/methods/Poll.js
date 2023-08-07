@@ -3,7 +3,7 @@ const {  EmbedBuilder } = require('discord.js');
 function editEmbed(whichField, interaction) {
     // Get the username of the user that triggered the button
     const username = interaction.user.username;
-
+//...
     // Update the embed to add the username as the last value of the first field
     const oldEmbed = interaction.message.embeds[whichField];
 console.log(oldEmbed);
