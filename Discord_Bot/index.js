@@ -62,7 +62,9 @@ client.on('interactionCreate', async (interaction) => {
     var newEmbed = Poll.editEmbed(2, interaction);
   }
       await message.edit({ embeds: [newEmbed] });
-    return;
+
+      await interaction.reply({ content: `You voted vor ${interaction.customId}`, ephemeral: true }); // Use 'ephemeral: false' for a public reply
+    
 });
 
 const deploy = require("./deploy-commands");

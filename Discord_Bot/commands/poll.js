@@ -96,7 +96,7 @@ module.exports = {
 
 
             const row = new ActionRowBuilder()
-			.addComponents(confirm, pending, cancel);
+			.addComponents(confirm, cancel, pending);
 
         // Send the main reply with the embed (visible to everyone)
         await interaction.reply({ embeds: [embed], components: [row]  });
