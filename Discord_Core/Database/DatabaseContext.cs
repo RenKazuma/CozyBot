@@ -8,8 +8,6 @@ namespace Discord_Core.Database
         
         public DbSet<User> Users { get; set; }
 
-        public DbSet<Poll> Polls { get; set; }
-
         public DatabaseContext()
         {
         }

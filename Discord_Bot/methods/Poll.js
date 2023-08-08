@@ -10,11 +10,10 @@ async function editEmbed(whichField, interaction) {
   // Make a copy of the specified field
   const updatedField = { ...oldEmbed.fields[whichField] };
 
-  const apiUrl = process.env.Api + "Poll";
-  const urlWithQuery = apiUrl + `?messageId=${interaction.message.id}`;
-  const response = await axios.get(urlWithQuery);
-  const multipleChoiceValue = response.data.multiple_choice;
-  
+  var multipleChoiceValue;
+  if(oldEmbed.footer.text == process.env.MultipleChoiceFalse) multipleChoiceValue = false
+  else multipleChoiceValue = true;
+
   var isUsernameDisplayed = false;
 
   for (let i = 0; i < oldEmbed.fields.length; i++) {

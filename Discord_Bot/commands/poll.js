@@ -30,12 +30,7 @@ module.exports = {
             option 
             .setName('color')
             .setDescription('Set the color')
-            .setRequired(false)
-            .addChoices(
-				{ name: 'Purple', value: '#5e548e' },
-				{ name: 'Blue', value: '#90e0ef' },
-				{ name: 'Green', value: '#a7c957' },
-			))
+            .setRequired(false))
         .addBooleanOption(option =>
             option
             .setName('multiple_choice')
@@ -44,21 +39,26 @@ module.exports = {
         ),
 
     async execute(interaction) {
-
+ 
         const title = interaction.options.getString('title');
         const color = interaction.options.getString('color');
         const btn1 = interaction.options.getString('button_1_label');
         const btn2 = interaction.options.getString('button_2_label');
         const btn3 = interaction.options.getString('button_3_label');
         const multipleChoice = interaction.options.getBoolean('multiple_choice') ?? false;
+        var footerText;
 
-         const errorMessages = [];
+        if(multipleChoice) footerText = process.env.MultipleChoiceTrue;
+        else footerText = process.env.MultipleChoiceFalse;
+        
+        const errorMessages = [];
 
         var embed = new EmbedBuilder()
           .setTitle(title)
           .setColor('#fb6f92')
           .setThumbnail('https://i.imgur.com/RnATZDl.png')
-          .setTimestamp();
+          .setTimestamp()
+          .setFooter({text: footerText});
     
         if (color) {
           if (!color.match(/^#[0-9A-F]{6}$/i)) {
@@ -107,26 +107,13 @@ module.exports = {
 			.addComponents(confirm, cancel, pending);
 
         // Send the main reply with the embed (visible to everyone)
-        var response2 = await interaction.reply({ embeds: [embed], components: [row]  });
-      
+        await interaction.reply({ embeds: [embed], components: [row]  });
+
         // Send error messages as ephemeral replies (visible only to the user who used the command)
         for (const errorMessage of errorMessages) {
-          await interaction.followUp({ content: errorMessage, ephemeral: true });
+            console.log(errorMessage +  "hhh")
+           await interaction.followUp({ content: errorMessage, ephemeral: true });
         }
-    
-        const pollData = {
-            id: '',
-            messageId: response2.id,
-            guildId: '974067727801139230',
-            multiple_choice: multipleChoice,
-          };
-
-          console.log(pollData);
-          const apiUrl = process.env.Api + "Poll";
-          const response = await axios.post(apiUrl, pollData);
-
-          // Assuming the API returns a success response (e.g., status code 200)
-          console.log("Poll added successfully:", response.data);
     },
 },
   
