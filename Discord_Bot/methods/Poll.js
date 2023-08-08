@@ -1,5 +1,4 @@
-const { EmbedBuilder, Embed } = require("discord.js");
-const axios = require("axios");
+const { EmbedBuilder } = require("discord.js");
 
 async function editEmbed(whichField, interaction) {
   const username = interaction.user.username;
@@ -8,55 +7,86 @@ async function editEmbed(whichField, interaction) {
   const oldEmbed = interaction.message.embeds[0];
 
   // Make a copy of the specified field
-  const updatedField = { ...oldEmbed.fields[whichField] };
+  var updatedField = { ...oldEmbed.fields[whichField] };
 
   var multipleChoiceValue;
-  if(oldEmbed.footer.text == process.env.MultipleChoiceFalse) multipleChoiceValue = false
+  if (oldEmbed.footer.text.includes(process.env.MultipleChoiceFalse))
+    multipleChoiceValue = false;
   else multipleChoiceValue = true;
 
-  var isUsernameDisplayed = false;
+  if (!multipleChoiceValue) {
+    for (let i = 0; i < oldEmbed.fields.length; i++) {
+      const field = oldEmbed.fields[i];
 
-  for (let i = 0; i < oldEmbed.fields.length; i++) {
-    const field = oldEmbed.fields[i];
-
-    if (field.value.includes(username)) {
-      isUsernameDisplayed = true;
-      break; // If username is found, no need to continue checking other fields
+      if (field.value.includes(username)) {
+        oldEmbed.fields[i].value = oldEmbed.fields[i].value.replace(
+          username,
+          ""
+        );
+        oldEmbed.fields[i] = checkNewlineCount(oldEmbed.fields[i]);
+        break;
+      }
     }
   }
 
-  if (multipleChoiceValue || !isUsernameDisplayed) {
-    // Remove the default "-" value from the specified field if it exists
-    if (updatedField.value === "-") {
-      updatedField.value = "";
-    }
+  // Remove the default "-" value from the specified field if it exists
+  if (updatedField.value === "-") {
+    updatedField.value = "";
+  }
 
-    // Check if the username is already present in the specified field
-    if (updatedField.value.includes(username)) {
-      // Return a message indicating that the user has already voted
-      return "You already voted for this option!";
-    }
-
+  // Check if the username is already present in the specified field
+  if (updatedField.value.includes(username)) {
+    // Return a message indicating that the user has already voted
+    console.log(updatedField.value);
+    updatedField.value = updatedField.value.replace(`${username}`, "");
+  } else {
     // Append the username to the value of the specified field
     updatedField.value += `\n${username}`;
+  }
 
-    // Copy the rest of the fields from the old embed to the new embed
-    const newEmbed = new EmbedBuilder(oldEmbed).spliceFields(
-      whichField,
-      1,
-      updatedField
-    ); // Replace the specified field with the updated one
+  updatedField = checkNewlineCount(updatedField);
 
-    // Add the remaining fields from the old embed to the new embed
-    for (let i = 1; i < oldEmbed.fields.length; i++) {
-      const field = oldEmbed.fields[i];
-    }
+  // Copy the rest of the fields from the old embed to the new embed
+  const newEmbed = new EmbedBuilder(oldEmbed).spliceFields(
+    whichField,
+    1,
+    updatedField
+  ); // Replace the specified field with the updated one
 
-    return newEmbed;
+  return {
+    newEmbed: newEmbed,
+    name: updatedField.name.slice(0, -3),
+  };
+}
+
+function checkNewlineCount(updatedField) {
+  const usernamesArray = updatedField.value.split('\n');
+  
+  const uniqueUsernames = new Set(usernamesArray.filter(username => username.trim() !== ''));
+  console.log(uniqueUsernames)
+  const numberOfUniqueUsers = uniqueUsernames.size;
+  console.log(numberOfUniqueUsers);
+
+  if (numberOfUniqueUsers >= 1){
+    updatedField.name = removeNumberFromEnd(updatedField.name);
   } 
 
-  return 'You already voted for this poll';
+  if (numberOfUniqueUsers !== 0) {
+    updatedField.name = `${updatedField.name} (${numberOfUniqueUsers})`;
+    return updatedField;
+  }
+
+  updatedField.name = removeNumberFromEnd(updatedField.name);
+  updatedField.value = "-";
+
+  return updatedField;
 }
+
+function removeNumberFromEnd(inputString) {
+  const numberPattern = /\(\d+\)$/;
+  return inputString.replace(numberPattern, "").trim();
+}
+
 
 module.exports = {
   editEmbed: editEmbed,

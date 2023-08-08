@@ -49,29 +49,38 @@ client.on("messageCreate", async function (message) {
 });
 
 // Handle button interactions
-client.on('interactionCreate', async (interaction) => {
+client.on("interactionCreate", async (interaction) => {
   if (!interaction.isButton()) return;
 
   const message = interaction.message;
 
   var newEmbed;
+  var name;
   if (interaction.customId === "confirm") {
-    newEmbed = await Poll.editEmbed(0, interaction);
-  } else if (interaction.customId === "cancel"){
-     newEmbed = await Poll.editEmbed(1, interaction);
-  } else if (interaction.customId === "pending"){
-     newEmbed = await Poll.editEmbed(2, interaction);
+    const result = await Poll.editEmbed(0, interaction);
+    newEmbed = result.newEmbed;
+    name = result.name;
+  } else if (interaction.customId === "cancel") {
+    const result = await Poll.editEmbed(1, interaction);
+    newEmbed = result.newEmbed;
+    name = result.name;
+  } else if (interaction.customId === "pending") {
+    const result = await Poll.editEmbed(2, interaction);
+    newEmbed = result.newEmbed;
+    name = result.name;
   }
 
-  if (typeof newEmbed === 'string') {
+  if (typeof newEmbed === "string") {
     await interaction.reply({ content: newEmbed, ephemeral: true });
     return;
   }
 
-      await message.edit({ embeds: [newEmbed] });
+  await message.edit({ embeds: [newEmbed] });
 
-      await interaction.reply({ content: `You voted vor ${interaction.customId}`, ephemeral: true }); // Use 'ephemeral: false' for a public reply
-    
+  await interaction.reply({
+    content: `You voted for ${name}`,
+    ephemeral: true,
+  }); // Use 'ephemeral: false' for a public reply
 });
 
 const deploy = require("./deploy-commands");
