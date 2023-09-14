@@ -185,3 +185,5 @@ dkms.conf
 docker/
 .idea
 .vscode/
+Discord_Api/appsettings.json
+Discord_Core/docker-compose.db.yml

@@ -38,7 +38,7 @@ public class UserController : ControllerBase
     public ActionResult GetUserById([FromQuery][Required] string discordId)
     {
 
-         User? user = _databaseContext.Users
+         User? user = _databaseContext.users
          .SingleOrDefault(u => u.DiscordId == discordId);
 
         if (user == null)
@@ -63,13 +63,13 @@ public class UserController : ControllerBase
     public ActionResult AddUser([FromQuery][Required] User user)
     {
 
-        if (_databaseContext.Users.Any(u => u.DiscordId == user.DiscordId))
+        if (_databaseContext.users.Any(u => u.DiscordId == user.DiscordId))
         {
             return BadRequest("The DiscordId already exists.");
         }
         
         try{
-            _databaseContext.Users.Add(user);
+            _databaseContext.users.Add(user);
             _databaseContext.SaveChanges();
         } catch(Exception ex)
         {
@@ -87,26 +87,26 @@ public class UserController : ControllerBase
     /// <response code="200">Successfull operation</response>
     /// <response code="404">No user found</response>
     /// <response code="500">No Connection to Database</response>
-    [HttpPut]
-    [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
-    [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
-    [ProducesResponseType(typeof(void), StatusCodes.Status500InternalServerError)]
-    public ActionResult ChangeUser([FromQuery] User user)
-    {
-        var oldUser = _databaseContext.Users.FirstOrDefault(u => u.DiscordId == user.DiscordId && u.Id == user.Id);
+    //[HttpPut]
+    //[ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
+    //[ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
+    //[ProducesResponseType(typeof(void), StatusCodes.Status500InternalServerError)]
+    //public ActionResult ChangeUser([FromQuery] User user)
+    //{
+    //    var oldUser = _databaseContext.Users.FirstOrDefault(u => u.DiscordId == user.DiscordId && u.Id == user.Id);
 
-        if (oldUser == null)
-        {
-            return NotFound();
-        }
+    //    if (oldUser == null)
+    //    {
+    //        return NotFound();
+    //    }
 
-        oldUser.Current_Level = user.Current_Level;
-        oldUser.Current_Exp = user.Current_Exp;
-        oldUser.Coins = user.Coins;
+    //    oldUser.Current_Level = user.Current_Level;
+    //    oldUser.Current_Exp = user.Current_Exp;
+    //    oldUser.Coins = user.Coins;
         
-        _databaseContext.SaveChanges();
-        return Ok();
-    }
+    //    _databaseContext.SaveChanges();
+    //    return Ok();
+    //}
 
     /// <summary>
     /// Deletes a User
@@ -123,7 +123,7 @@ public class UserController : ControllerBase
     [ProducesResponseType(typeof(void), StatusCodes.Status500InternalServerError)]
     public IResult RemoveUser([FromQuery][Required] string discordId)
     {
-        var entity = _databaseContext.Users.SingleOrDefault(u => u.DiscordId == discordId);
+        var entity = _databaseContext.users.SingleOrDefault(u => u.DiscordId == discordId);
 
         if (entity == null)
         {
@@ -132,7 +132,7 @@ public class UserController : ControllerBase
 
         try
         {
-            _databaseContext.Users.Remove(entity);
+            _databaseContext.users.Remove(entity);
             _databaseContext.SaveChanges();
         } catch
         {

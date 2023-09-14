@@ -1,23 +1,27 @@
-﻿using ServiceStack.DataAnnotations;
+using ServiceStack.DataAnnotations;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using RequiredAttribute = System.ComponentModel.DataAnnotations.RequiredAttribute;
 using ForeignKeyAttribute = System.ComponentModel.DataAnnotations.Schema.ForeignKeyAttribute;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Discord_Core.Database.Entities
 {
-    [Table("User")]
-    public class User
+    [Table("Timer")]
+    public class Timer
     {
         [Key]
         [Column("Id", Order = 1)]
         public long Id { get; set; }
         
         [Unique]
-        public string? IngameName {get; set;}
+        [Required]
+        [NotNull]
+        public string Name {get; set;}
         
-        [Unique]
-        public string DiscordId { get; set; }
+        [Required]
+        [NotNull]
+        public int TimerAmount {get; set;}
         
     }
 }

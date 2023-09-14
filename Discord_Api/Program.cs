@@ -3,8 +3,8 @@ using Microsoft.OpenApi.Models;
 using DiscordApi.Controllers;
 using Discord_Core.Database;
 using Discord_Core;
-using Discord_Core.Database;
-using System.IO;
+using Microsoft.Extensions.FileProviders;
+using Swashbuckle.AspNetCore.SwaggerUI;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,9 +41,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "Discord Bot Cozy v1");
+        c.InjectStylesheet("/swagger/custom.css");
     });
 }
-
+app.UseStaticFiles();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();

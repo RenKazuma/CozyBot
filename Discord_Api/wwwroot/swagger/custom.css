@@ -1,0 +1,95 @@
+/* Color Variables */
+/* Alpha Variables */
+/* RGB Alpha Variables */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 #601f39;
+  }
+}
+body {
+  background-image: linear-gradient(135deg, #e8ebe4 0%, #b8bacf 100%);
+}
+body .swagger-ui .btn.cancel {
+  border-color: #561F60;
+  color: #561F60;
+}
+body .swagger-ui .btn.cancel:hover, body .swagger-ui .btn.cancel:focus {
+  animation: pulse 1s;
+  box-shadow: 0 0 0 2em transparent;
+}
+body .swagger-ui .btn.execute {
+  background-color: transparent;
+  background-image: linear-gradient(to right, #20002c 0%, #cbb4d4 51%, #20002c 100%);
+  transition: 0.5s;
+  background-size: 200% auto;
+  border-color: transparent;
+}
+body .swagger-ui .btn.execute:hover {
+  background-position: right center;
+  color: #fff;
+  text-decoration: none;
+}
+body .swagger-ui .opblock {
+  /* GET */
+  /* POST */
+  /* PUT */
+  /* DELETE */
+}
+body .swagger-ui .opblock.opblock-get {
+  border-color: #e8ebe4;
+  background: rgba(232, 235, 228, 0.5);
+}
+body .swagger-ui .opblock.opblock-get .opblock-summary {
+  border-color: #e8ebe4;
+}
+body .swagger-ui .opblock.opblock-get .opblock-summary-method {
+  background: #e8ebe4;
+  color: #3b4151;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+}
+body .swagger-ui .opblock.opblock-get .tab-header .tab-item.active h4 span:after {
+  background: #e8ebe4;
+}
+body .swagger-ui .opblock.opblock-post {
+  border-color: #d2d5dd;
+  background: rgba(210, 213, 221, 0.5);
+}
+body .swagger-ui .opblock.opblock-post .opblock-summary {
+  border-color: #d2d5dd;
+}
+body .swagger-ui .opblock.opblock-post .opblock-summary-method {
+  background: #d2d5dd;
+  color: #3b4151;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+}
+body .swagger-ui .opblock.opblock-post .tab-header .tab-item.active h4 span:after {
+  background: #d2d5dd;
+}
+body .swagger-ui .opblock.opblock-put {
+  border-color: #b8bacf;
+  background: rgba(184, 186, 207, 0.5);
+}
+body .swagger-ui .opblock.opblock-put .opblock-summary {
+  border-color: #b8bacf;
+}
+body .swagger-ui .opblock.opblock-put .opblock-summary-method {
+  background: #b8bacf;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+}
+body .swagger-ui .opblock.opblock-put .tab-header .tab-item.active h4 span:after {
+  background: #b8bacf;
+}
+body .swagger-ui .opblock.opblock-delete {
+  border-color: #999ac6;
+  background: rgba(153, 154, 198, 0.5);
+}
+body .swagger-ui .opblock.opblock-delete .opblock-summary {
+  border-color: #999ac6;
+}
+body .swagger-ui .opblock.opblock-delete .opblock-summary-method {
+  background: #999ac6;
+  box-shadow: rgba(0, 0, 0, 0.16) 0 1px 4px;
+}
+body .swagger-ui .opblock.opblock-delete .tab-header .tab-item.active h4 span:after {
+  background: #999ac6;
+}/*# sourceMappingURL=custom.css.map */

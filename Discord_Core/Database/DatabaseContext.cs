@@ -1,12 +1,19 @@
 ﻿using Discord_Core.Database.Entities;
 using Microsoft.EntityFrameworkCore;
+using Timer = Discord_Core.Database.Entities.Timer;
 
 namespace Discord_Core.Database
 {
     public class DatabaseContext : DbContext
     {
         
-        public DbSet<User> Users { get; set; }
+        public DbSet<User> users { get; set; }
+
+        public DbSet<Buff> buffs { get; set; }
+
+        public DbSet<Timer> timers { get; set; }
+
+        public DbSet<WaitingList> waitingLists { get; set; }
 
         public DatabaseContext()
         {

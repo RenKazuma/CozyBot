@@ -1,0 +1,133 @@
+/* Color Variables */
+$color1: #e8ebe4;
+$color2: #d2d5dd;
+$color3: #b8bacf;
+$color4: #999ac6;
+
+$cancel: #561F60;
+
+$text-light: #3b4151;
+/* Alpha Variables */
+$alpha: 0.5;
+
+/* RGB Alpha Variables */
+$color1rgb: rgba(red($color1), green($color1), blue($color1), $alpha);
+$color2rgb: rgba(red($color2), green($color2), blue($color2), $alpha);
+$color3rgb: rgba(red($color3), green($color3), blue($color3), $alpha);
+$color4rgb: rgba(red($color4), green($color4), blue($color4), $alpha);
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 adjust-hue($cancel, 45deg) }
+}
+
+body {
+  background-image: linear-gradient(135deg, $color1 0%, $color3 100%);
+  
+  .swagger-ui {
+
+    .btn.cancel {
+      border-color: $cancel;
+      color: $cancel;
+      
+      &:hover,
+      &:focus {
+        animation: pulse 1s;
+        box-shadow: 0 0 0 2em transparent;
+      }
+    }
+    
+    .btn.execute {
+      background-color: transparent;
+      background-image: linear-gradient(to right, #20002c 0%, #cbb4d4  51%, #20002c  100%);
+      transition: .5s;
+      background-size: 200% auto;
+      border-color: transparent;
+      
+      &:hover{
+        background-position: right center;
+        color: #fff;
+        text-decoration: none;
+      }
+    }
+    
+    .opblock {
+      /* GET */
+      &.opblock-get {
+        border-color: $color1;
+        background: $color1rgb;
+
+        .opblock-summary {
+          border-color: $color1;
+        }
+
+        .opblock-summary-method {
+          background: $color1;
+          color: $text-light;
+          box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+        }
+
+        .tab-header .tab-item.active h4 span:after {
+          background: $color1;
+        }
+      }
+
+      /* POST */
+      &.opblock-post {
+        border-color: $color2;
+        background: $color2rgb;
+
+        .opblock-summary {
+          border-color: $color2;
+        }
+
+        .opblock-summary-method {
+          background: $color2;
+          color: $text-light;
+          box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+        }
+
+        .tab-header .tab-item.active h4 span:after {
+          background: $color2;
+        }
+      }
+
+      /* PUT */
+      &.opblock-put {
+        border-color: $color3;
+        background: $color3rgb;
+
+        .opblock-summary {
+          border-color: $color3;
+        }
+
+        .opblock-summary-method {
+          background: $color3;
+          box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+        }
+
+        .tab-header .tab-item.active h4 span:after {
+          background: $color3;
+        }
+      }
+
+      /* DELETE */
+      &.opblock-delete {
+        border-color: $color4;
+        background: $color4rgb;
+
+        .opblock-summary {
+          border-color: $color4;
+        }
+
+        .opblock-summary-method {
+          background: $color4;
+          box-shadow: rgba(0, 0, 0, 0.16) 0 1px 4px;
+        }
+
+        .tab-header .tab-item.active h4 span:after {
+          background: $color4;
+        }
+      }
+    }
+  }
+}
