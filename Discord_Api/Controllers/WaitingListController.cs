@@ -6,74 +6,73 @@ using Swashbuckle.AspNetCore.Annotations;
 using Swashbuckle.AspNetCore.Swagger;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
-
+using WaitingList = Discord_Core.Database.Entities.WaitingList;
 namespace DiscordApi.Controllers
 {
     /// <summary>
-    /// Controller for managing buffs.
+    /// Controller for managing waitingLists.
     /// </summary>
     [ApiController]
     [Route("[controller]")]
-    public class BuffController : ControllerBase
+    public class WaitingListController : ControllerBase
     {
-        private readonly ILogger<BuffController> _logger;
+        private readonly ILogger<WaitingListController> _logger;
         private readonly DatabaseContext _databaseContext;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="BuffController"/> class.
+        /// Initializes a new instance of the <see cref="WaitingListController"/> class.
         /// </summary>
         /// <param name="logger">The logger instance.</param>
         /// <param name="dbContext">The database context.</param>
-        public BuffController(ILogger<BuffController> logger, DatabaseContext dbContext)
+        public WaitingListController(ILogger<WaitingListController> logger, DatabaseContext dbContext)
         {
             _logger = logger;
             _databaseContext = dbContext;
         }
 
         /// <summary>
-        /// Get a list of buffs.
+        /// Get a list of waitingLists.
         /// </summary>
         /// <response code="200">Successful operation</response>
         /// <response code="404">No buff found</response>
         /// <response code="500">No connection to the database</response>
-        /// <returns>The list of buffs.</returns>
+        /// <returns>The list of waitingLists.</returns>
         [HttpGet]
-        [ProducesResponseType(typeof(List<Buff>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(List<WaitingList>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(void), StatusCodes.Status500InternalServerError)]
-        public ActionResult GetBuffs()
+        public ActionResult Get()
         {
-            List<Buff> buffs = _databaseContext.buffs.ToList();
+            List<WaitingList> waitingLists = _databaseContext.waitingLists
+                .Include(wl => wl.User)
+                .Include(wl => wl.Buff)
+                .Include(wl => wl.Timer)
+                .ToList();
 
-            if (buffs.Count() == 0)
+            if (waitingLists.Count() == 0)
             {
                 return NotFound("No buff found");
             }
 
-            return Ok(buffs);
+            return Ok(waitingLists);
         }
 
         /// <summary>
-        /// Add a new Buff.
+        /// Add a new WaitingList.
         /// </summary>
-        /// <param name="buff">Buff to add.</param>
+        /// <param name="buff">WaitingList to add.</param>
         /// <response code="200">Successful operation</response>
-        /// <response code="409">Buff couldn't be added</response>
+        /// <response code="409">WaitingList couldn't be added</response>
         /// <response code="500">No connection to the database</response>
         [HttpPost]
         [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(void), StatusCodes.Status409Conflict)]
         [ProducesResponseType(typeof(void), StatusCodes.Status500InternalServerError)]
-        public ActionResult Add([FromBody] Buff buff)
+        public ActionResult Add([FromBody] WaitingList buff)
         {
-            if (_databaseContext.buffs.Any(u => u.Name == buff.Name))
-            {
-                return BadRequest("The Name already exists.");
-            }
-
             try
             {
-                _databaseContext.buffs.Add(buff);
+                _databaseContext.waitingLists.Add(buff);
                 _databaseContext.SaveChanges();
             }
             catch (Exception ex)
@@ -91,25 +90,29 @@ namespace DiscordApi.Controllers
         /// <param name="newName">Text to be set as a new Name</param>
         /// <param name="newDescription">Text to be set as a new Description</param>
         /// <returns>A status code indicating the result of the operation.</returns>
-        [HttpPut("/Buff/ChangeById")]
+        [HttpPut("/WaitingList/ChangeById")]
         [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(void), StatusCodes.Status500InternalServerError)]
-        public ActionResult ChangeById([Required]long id, string? newName = null, string? newDescription = null)
+        public ActionResult ChangeById([Required]long id, long? userId = null, long? buffId = null, long? timerId = null)
         {
-            var oldData = _databaseContext.buffs.FirstOrDefault(u => u.Id == id);
+            var oldData = _databaseContext.waitingLists.FirstOrDefault(u => u.Id == id);
 
             if (oldData == null)
             {
                 return NotFound();
             }
 
-            if(newName != null){
-                oldData.Name = newName;
+            if(userId != null){
+                oldData.UserId = (long)userId;
             }
 
-            if(newDescription != null){
-                oldData.Description = newDescription;
+            if(buffId != null){
+                oldData.BuffId = (long)buffId;
+            }
+
+            if(timerId != null){
+                oldData.TimerId = (long)timerId;
             }
 
             _databaseContext.SaveChanges();
@@ -118,21 +121,21 @@ namespace DiscordApi.Controllers
 
 
         /// <summary>
-        /// Deletes a Buff.
+        /// Deletes a WaitingList.
         /// </summary>
-        /// <param name="buffId">BuffId of the buff to delete.</param>
-        /// <response code="200">Buff removed</response>
-        /// <response code="404">Buff not found</response>
-        /// <response code="409">Buff couldn't be removed</response>
-        /// <response code="500">No Buff in the database</response>
+        /// <param name="waitingListId">TimerId of the waitingList to delete.</param>
+        /// <response code="200">WaitingList removed</response>
+        /// <response code="404">WaitingList not found</response>
+        /// <response code="409">WaitingList couldn't be removed</response>
+        /// <response code="500">No WaitingList in the database</response>
         [HttpDelete]
         [ProducesResponseType(typeof(void), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(void), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(void), StatusCodes.Status409Conflict)]
         [ProducesResponseType(typeof(void), StatusCodes.Status500InternalServerError)]
-        public IActionResult Remove([FromQuery][Required] long buffId)
+        public IActionResult Remove([FromQuery][Required] long waitingListId)
         {
-            var entity = _databaseContext.buffs.SingleOrDefault(u => u.Id == buffId);
+            var entity = _databaseContext.waitingLists.SingleOrDefault(u => u.Id == waitingListId);
 
             if (entity == null)
             {
@@ -141,7 +144,11 @@ namespace DiscordApi.Controllers
 
             try
             {
-                _databaseContext.buffs.Remove(entity);
+                _databaseContext.waitingLists.Remove(entity);
+
+                var relatedRecords = _databaseContext.waitingLists.Where(wl => wl.Id == waitingListId);
+                _databaseContext.waitingLists.RemoveRange(relatedRecords);
+
                 _databaseContext.SaveChanges();
             }
             catch
